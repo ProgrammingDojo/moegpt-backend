@@ -5,9 +5,9 @@
   "main": "index.js",
   "scripts": {
     "prepare": "husky install",
-		"lint": "eslint .",
-		"format": "prettier --write .",
-		"start": "nodemon -r esm index.js"
+    "lint": "eslint .",
+    "format": "prettier --write .",
+    "start": "nodemon -r esm index.js"
   },
   "keywords": [],
   "author": "programming dojo",
@@ -28,12 +28,12 @@
     "nanoid": "^2.1.11",
     "nodemon": "^3.0.1"
   },
-	"devDependencies": {
-		"eslint": "^8.56.0",
-		"eslint-config-prettier": "^9.1.0",
-		"eslint-plugin-prettier": "^5.1.3",
-		"husky": "^8.0.3",
-		"lint-staged": "^15.2.0",
-		"prettier": "^3.2.4"
-	}
+  "devDependencies": {
+    "eslint": "^8.56.0",
+    "eslint-config-prettier": "^9.1.0",
+    "eslint-plugin-prettier": "^5.1.3",
+    "husky": "^8.0.3",
+    "lint-staged": "^15.2.0",
+    "prettier": "^3.2.4"
+  }
 }

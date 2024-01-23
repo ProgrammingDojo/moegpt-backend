@@ -1,6 +1,7 @@
 import express from 'express';
 import cookieParser from 'cookie-parser';
-import {readdirSync} from 'fs';
+import { readdirSync } from 'fs';
+import cors from 'cors';
 import moogoose from 'mongoose';
 
 require('dotenv').config();
@@ -16,10 +17,11 @@ moogoose
 	});
 
 app.use(express.json());
+app.use(cors());
 app.use(morgan('dev'));
 app.use(cookieParser());
 
-readdirSync("./routes").map((r) => app.use("/api", require(`./routes/${r}`)));
+readdirSync('./routes').map((r) => app.use('/api', require(`./routes/${r}`)));
 
 const port = process.env.PORT || 6666;
 
