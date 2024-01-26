@@ -1,12 +1,13 @@
 import mongoose from 'mongoose';
 const { Schema } = mongoose;
+import { chatSchema } from './chat.js';
 
 const userSchema = new Schema(
 	{
 		username: {
 			type: String,
 			trim: true,
-			required: true,
+			required: false,
 		},
 		email: {
 			type: String,
@@ -17,12 +18,12 @@ const userSchema = new Schema(
 		password: {
 			type: String,
 			required: true,
-			min: 6,
+			min: 8,
 			max: 32,
 		},
 		avatar: {
 			type: String,
-			default: '/avatar.png',
+			default: '',
 		},
 		role: {
 			type: [String],
@@ -32,6 +33,10 @@ const userSchema = new Schema(
 		passwordResetCode: {
 			data: String,
 			default: '',
+		},
+		chatRecords: {
+			type: Array,
+			default: [chatSchema],
 		},
 	},
 	{ timestamps: true }
