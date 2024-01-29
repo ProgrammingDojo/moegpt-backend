@@ -50,3 +50,15 @@ export const signup = async (req, res) => {
 		return res.status(400).send('Error. Sign up failed.');
 	}
 };
+
+export const currentUser = async (req, res) => {
+	console.log(req);
+	try {
+		const user = await User.findById(req.auth._id).select('-password').exec();
+		console.log('CURRENT USER ', user);
+		return res.json({ ok: true });
+	} catch (err) {
+		console.log(err);
+		return res.sendStatus(400).send('Error. Try again.');
+	}
+};
