@@ -17,13 +17,13 @@ moogoose
 	});
 
 app.use(express.json());
-app.use(cors());
+app.use(cors({ origin: true, credentials: true }));
 app.use(morgan('dev'));
 app.use(cookieParser());
 
 readdirSync('./routes').map((r) => app.use('/api', require(`./routes/${r}`)));
 
-const port = process.env.PORT || 6666;
+const port = process.env.PORT || 5555;
 
 app.listen(port, () => {
 	console.log(`app listening at http://localhost:${port}`);

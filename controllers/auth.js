@@ -4,7 +4,6 @@ import jwt from 'jsonwebtoken';
 
 export const login = async (req, res) => {
 	try {
-		console.log(req.body);
 		const { email, password } = req.body;
 		const user = await User.findOne({ email }).exec();
 		if (!user) return res.status(400).send('No user found');
@@ -48,5 +47,16 @@ export const signup = async (req, res) => {
 	} catch (err) {
 		console.log(err);
 		return res.status(400).send('Error. Sign up failed.');
+	}
+};
+
+export const currentUser = async (req, res) => {
+	try {
+		const user = await User.findById(req.auth._id).select('-password').exec();
+		console.log('CURRENT USER ', user);
+		return res.json({ ok: true });
+	} catch (err) {
+		console.log(err);
+		return res.sendStatus(400).send('Error. Try again.');
 	}
 };
