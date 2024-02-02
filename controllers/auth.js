@@ -4,7 +4,6 @@ import jwt from 'jsonwebtoken';
 
 export const login = async (req, res) => {
 	try {
-		console.log(req.body);
 		const { email, password } = req.body;
 		const user = await User.findOne({ email }).exec();
 		if (!user) return res.status(400).send('No user found');
@@ -52,7 +51,6 @@ export const signup = async (req, res) => {
 };
 
 export const currentUser = async (req, res) => {
-	console.log(req);
 	try {
 		const user = await User.findById(req.auth._id).select('-password').exec();
 		console.log('CURRENT USER ', user);
