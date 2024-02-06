@@ -29,14 +29,11 @@ export const login = async (req, res) => {
 export const signup = async (req, res) => {
 	try {
 		const { email, password } = req.body;
-		// validation
 		if (!password || password.length < 8)
 			return res.status(400).send('Password is required and should be min 8 characters long');
 		let userExist = await User.findOne({ email }).exec();
 		if (userExist) return res.status(400).send('Email is taken');
-		// hash password
 		const hashedPassword = await hashPassword(password);
-		// signup
 		const user = new User({
 			email,
 			password: hashedPassword,
@@ -52,11 +49,9 @@ export const signup = async (req, res) => {
 
 export const currentUser = async (req, res) => {
 	try {
-		const user = await User.findById(req.auth._id).select('-password').exec();
-		console.log('CURRENT USER ', user);
+		await User.findById(req.auth._id).select('-password').exec();
 		return res.json({ ok: true });
 	} catch (err) {
-		console.log(err);
 		return res.sendStatus(400).send('Error. Try again.');
 	}
 };
