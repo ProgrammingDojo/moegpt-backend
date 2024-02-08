@@ -28,14 +28,21 @@ export const login = async (req, res) => {
 
 export const signup = async (req, res) => {
 	try {
-		const { email, password } = req.body;
+		const { email, password, username } = req.body;
 		if (!password || password.length < 8)
 			return res.status(400).send('Password is required and should be min 8 characters long');
+		if (!username) {
+			return res.status(400).send('Username must be valid');
+		}
+		if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+			return res.status(400).send('Email must be valid');
+		}
 		let userExist = await User.findOne({ email }).exec();
 		if (userExist) return res.status(400).send('Email is taken');
 		const hashedPassword = await hashPassword(password);
 		const user = new User({
 			email,
+			username,
 			password: hashedPassword,
 		});
 		await user.save();

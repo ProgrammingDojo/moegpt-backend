@@ -2,14 +2,14 @@ import express from 'express';
 import cookieParser from 'cookie-parser';
 import { readdirSync } from 'fs';
 import cors from 'cors';
-import moogoose from 'mongoose';
+import mongoose from 'mongoose';
 import csrf from 'csurf';
 
 require('dotenv').config();
 const morgan = require('morgan');
 const app = express();
 const csrfProtection = csrf({ cookie: true });
-moogoose
+mongoose
 	.connect(process.env.DATABASE, {})
 	.then(() => {
 		console.log('DB connected');
