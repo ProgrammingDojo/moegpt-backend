@@ -54,6 +54,15 @@ export const signup = async (req, res) => {
 	}
 };
 
+export const logout = async (req, res) => {
+	try {
+		res.clearCookie('token');
+		return res.json({ ok: true });
+	} catch (err) {
+		console.log(err);
+	}
+};
+
 export const currentUser = async (req, res) => {
 	try {
 		await User.findById(req.auth._id).select('-password').exec();
