@@ -9,6 +9,7 @@ const router = require('./routes/index');
 
 const app = express();
 const csrfProtection = csrf({ cookie: true });
+mongoose.set('strictQuery', false);
 mongoose
 	.connect(process.env.DATABASE, {})
 	.then(() => {
