@@ -1,8 +1,8 @@
-import User from '../models/user';
-import { hashPassword, comparePassword } from '../utils/auth';
-import jwt from 'jsonwebtoken';
+const User = require('../models/user');
+const { hashPassword, comparePassword } = require('../utils/auth');
+const jwt = require('jsonwebtoken');
 
-export const login = async (req, res) => {
+const login = async (req, res) => {
 	try {
 		const { email, password } = req.body;
 		const user = await User.findOne({ email }).exec();
@@ -26,7 +26,7 @@ export const login = async (req, res) => {
 	}
 };
 
-export const signup = async (req, res) => {
+const signup = async (req, res) => {
 	try {
 		const { email, password, username } = req.body;
 		if (!password || password.length < 8)
@@ -54,7 +54,7 @@ export const signup = async (req, res) => {
 	}
 };
 
-export const logout = async (req, res) => {
+const logout = async (req, res) => {
 	try {
 		res.clearCookie('token');
 		return res.json({ ok: true });
@@ -63,11 +63,18 @@ export const logout = async (req, res) => {
 	}
 };
 
-export const currentUser = async (req, res) => {
+const currentUser = async (req, res) => {
 	try {
 		await User.findById(req.auth._id).select('-password').exec();
 		return res.json({ ok: true });
 	} catch (err) {
 		return res.sendStatus(400).send('Error. Try again.');
 	}
+};
+
+module.exports = {
+	login,
+	signup,
+	logout,
+	currentUser,
 };
