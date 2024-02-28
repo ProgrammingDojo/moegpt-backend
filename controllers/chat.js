@@ -21,7 +21,7 @@ const gptResponse = async (req, res) => {
 			],
 		});
 
-		return res.json(getResponse.data.choices[0].message.content);
+		return res.json(getResponse.choices[0].message.content);
 	} catch (err) {
 		console.log(err);
 		return res.status(400).send('Error. Try again.');
