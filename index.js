@@ -1,12 +1,12 @@
-import express from 'express';
-import cookieParser from 'cookie-parser';
-import { readdirSync } from 'fs';
-import cors from 'cors';
-import mongoose from 'mongoose';
-import csrf from 'csurf';
-
+const express = require('express');
+const cookieParser = require('cookie-parser');
+const cors = require('cors');
+const mongoose = require('mongoose');
+const csrf = require('csurf');
 require('dotenv').config();
 const morgan = require('morgan');
+const router = require('./routes/index');
+
 const app = express();
 const csrfProtection = csrf({ cookie: true });
 mongoose
@@ -22,9 +22,7 @@ app.use(express.json());
 app.use(cors({ origin: true, credentials: true }));
 app.use(morgan('dev'));
 app.use(cookieParser());
-
-readdirSync('./routes').map((r) => app.use('/api', require(`./routes/${r}`)));
-
+app.use('/api', router);
 app.use(csrfProtection);
 app.get('/api/csrf-token', (req, res) => {
 	res.json({ csrfToken: req.csrfToken() });
