@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 const { Schema } = mongoose;
-const { chatSchema } = require('./chat.js');
+const { chatsSchema } = require('./chats.js');
 const userSchema = new Schema(
 	{
 		username: {
@@ -33,9 +33,9 @@ const userSchema = new Schema(
 			data: String,
 			default: '',
 		},
-		chatRecords: {
-			type: Array,
-			default: [chatSchema],
+		chatsRecords: {
+			type: [chatsSchema],
+			default: [],
 		},
 	},
 	{ timestamps: true }
