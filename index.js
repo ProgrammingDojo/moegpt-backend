@@ -5,6 +5,7 @@ const mongoose = require('mongoose');
 const csrf = require('csurf');
 require('dotenv').config();
 const morgan = require('morgan');
+const bodyParser = require('body-parser');
 const router = require('./routes/index');
 
 const app = express();
@@ -18,6 +19,9 @@ mongoose
 	.catch((err) => {
 		console.log('DB CONNECTION ERROR', err);
 	});
+
+app.use(bodyParser.json({ limit: '25mb' }));
+app.use(bodyParser.urlencoded({ limit: '25mb', extended: true }));
 
 app.use(express.json());
 app.use(cors({ origin: true, credentials: true }));
