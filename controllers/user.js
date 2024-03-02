@@ -21,7 +21,7 @@ if (!fs.existsSync(uploadsDir)) {
 	fs.mkdirSync(uploadsDir);
 }
 
-const uploadProfile = async (req, res) => {
+const uploadAvatar = async (req, res) => {
 	try {
 		const { email } = req.body;
 		if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
@@ -31,7 +31,7 @@ const uploadProfile = async (req, res) => {
 		if (!user) return res.status(404).send('User does not exist');
 		const imageData = req.body.image;
 		const base64Data = imageData.replace(/^data:image\/\w+;base64,/, '');
-		const filename = `profile-${uuidv4()}.png`;
+		const filename = `avatar-${uuidv4()}.png`;
 		fs.writeFile(path.join(uploadsDir, filename), base64Data, 'base64', async (error) => {
 			if (error) {
 				return res.status(500).send({ message: 'Error saving the image', error });
@@ -43,8 +43,8 @@ const uploadProfile = async (req, res) => {
 			res.send({ message: 'Image uploaded successfully', url: pathImg });
 		});
 	} catch (err) {
-		console.log('error happened when trying to upload profile image, Error Msg: ', err);
+		console.log('error happened when trying to upload avatar image, Error Msg: ', err);
 	}
 };
 
-module.exports = { uploadProfile };
+module.exports = { uploadAvatar };
