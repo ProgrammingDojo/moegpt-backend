@@ -23,14 +23,24 @@ if (!fs.existsSync(uploadsDir)) {
 
 const uploadProfile = async (req, res) => {
 	try {
+		const { email } = req.body;
+		if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+			return res.status(400).send('Email must be valid');
+		}
+		let user = await User.findOne({ email }).exec();
+		if (!user) return res.status(404).send('User does not exist');
 		const imageData = req.body.image;
 		const base64Data = imageData.replace(/^data:image\/\w+;base64,/, '');
 		const filename = `profile-${uuidv4()}.png`;
-		fs.writeFile(path.join(uploadsDir, filename), base64Data, 'base64', (error) => {
+		fs.writeFile(path.join(uploadsDir, filename), base64Data, 'base64', async (error) => {
 			if (error) {
 				return res.status(500).send({ message: 'Error saving the image', error });
 			}
-			res.send({ message: 'Image uploaded successfully', url: `/uploads/${filename}` });
+			const port = process.env.PORT || 5555;
+			const pathImg = `http://localhost:${port}/uploads/${filename}`;
+			user.avatar = pathImg;
+			await user.save();
+			res.send({ message: 'Image uploaded successfully', url: pathImg });
 		});
 	} catch (err) {
 		console.log('error happened when trying to upload profile image, Error Msg: ', err);
