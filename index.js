@@ -5,7 +5,9 @@ const mongoose = require('mongoose');
 const csrf = require('csurf');
 require('dotenv').config();
 const morgan = require('morgan');
+const bodyParser = require('body-parser');
 const router = require('./routes/index');
+const path = require('path');
 
 const app = express();
 const csrfProtection = csrf({ cookie: true });
@@ -19,6 +21,8 @@ mongoose
 		console.log('DB CONNECTION ERROR', err);
 	});
 
+app.use(bodyParser.json({ limit: '25mb' }));
+app.use(bodyParser.urlencoded({ limit: '25mb', extended: true }));
 app.use(express.json());
 app.use(cors({ origin: true, credentials: true }));
 app.use(morgan('dev'));
@@ -28,6 +32,8 @@ app.use(csrfProtection);
 app.get('/api/csrf-token', (req, res) => {
 	res.json({ csrfToken: req.csrfToken() });
 });
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+
 const port = process.env.PORT || 5555;
 
 app.listen(port, () => {
