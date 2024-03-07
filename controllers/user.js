@@ -16,7 +16,6 @@ const storage = multer.diskStorage({
 const upload = multer({ storage: storage });
 
 const uploadsDir = path.resolve(__dirname, '..', 'uploads');
-console.log(uploadsDir);
 if (!fs.existsSync(uploadsDir)) {
 	fs.mkdirSync(uploadsDir);
 }
@@ -38,9 +37,18 @@ const uploadAvatar = async (req, res) => {
 			}
 			const port = process.env.PORT || 5555;
 			const pathImg = `http://localhost:${port}/uploads/${filename}`;
+			if (user.avatar) {
+				fs.unlink(path.join(uploadsDir, user.avatar.split('uploads/')[1]), (err) => {
+					if (err) {
+						return res
+							.status(500)
+							.send({ message: 'Error deleting the previous image', err });
+					}
+				});
+			}
 			user.avatar = pathImg;
 			await user.save();
-			res.send({ message: 'Image uploaded successfully', url: pathImg });
+			res.json({ avatar: pathImg });
 		});
 	} catch (err) {
 		console.log('error happened when trying to upload avatar image, Error Msg: ', err);
