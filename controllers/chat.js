@@ -1,6 +1,8 @@
 const OpenAI = require('openai');
 const { Chat } = require('../models/chat');
 const { Chats } = require('../models/chats');
+const User = require('../models/user');
+
 const openai = new OpenAI({
 	apiKey: process.env.OPENAI_API_KEY,
 });
@@ -60,4 +62,13 @@ const gptResponse = async (req, res) => {
 	}
 };
 
-module.exports = { gptResponse };
+const chats = async (req, res) => {
+	try {
+		const chatsRecords = await User.findById(req.auth._id).select('chatsRecords').exec();
+		return res.json(chatsRecords);
+	} catch (err) {
+		return res.sendStatus(400).send('Error. Try again.');
+	}
+};
+
+module.exports = { gptResponse, chats };

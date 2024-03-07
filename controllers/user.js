@@ -13,7 +13,7 @@ const storage = multer.diskStorage({
 	},
 });
 
-const upload = multer({ storage: storage });
+multer({ storage: storage });
 
 const uploadsDir = path.resolve(__dirname, '..', 'uploads');
 console.log(uploadsDir);
