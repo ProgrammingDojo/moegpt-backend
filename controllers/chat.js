@@ -1,7 +1,6 @@
 const OpenAI = require('openai');
 const { Chat } = require('../models/chat');
 const { Chats } = require('../models/chats');
-const User = require('../models/user');
 
 const openai = new OpenAI({
 	apiKey: process.env.OPENAI_API_KEY,
@@ -9,8 +8,7 @@ const openai = new OpenAI({
 
 const gptResponse = async (req, res) => {
 	try {
-		const { message, chatsId, userId } = req.body;
-		console.log(req.body);
+		const { message, chatsId, userId, name } = req.body;
 		const getResponse = await openai.chat.completions.create({
 			model: 'gpt-3.5-turbo',
 			messages: [
@@ -24,36 +22,37 @@ const gptResponse = async (req, res) => {
 				},
 			],
 		});
+		const gptMsg = getResponse.choices[0].message.content;
 		const chats = await Chats.findOne({ chats: chatsId }).exec();
 		if (!chats) {
 			const newChats = new Chats({
 				userId,
 				chatsContent: [],
-				name: message.slice(0, 15),
+				name,
 			});
-			await newChats.save();
+			const savedChats = await newChats.save();
 
 			const newChat = new Chat({
 				chatsId: newChats._id,
 				userMsg: message,
-				gptMsg: getResponse.choices[0].message.content,
+				gptMsg,
 			});
-			await newChat.save();
+			const savedChat = await newChat.save();
 
-			newChats.chatsContent.push(newChat);
-			await newChats.save();
+			savedChats.chatsContent.push(savedChat);
+			await savedChats.save();
 		} else {
 			const newChat = new Chat({
 				chatsId,
 				userMsg: message,
-				gptMsg: getResponse.choices[0].message.content,
+				gptMsg,
 			});
-			await newChat.save();
-			chats.chatsContent.push(newChat);
+			const savedChat = await newChat.save();
+			chats.chatsContent.push(savedChat);
 			await chats.save();
 		}
 
-		return res.json(getResponse.choices[0].message.content);
+		return res.json(gptMsg);
 	} catch (err) {
 		console.log(err);
 		return res
@@ -63,11 +62,14 @@ const gptResponse = async (req, res) => {
 };
 
 const chats = async (req, res) => {
+	const userId = req.auth._id;
 	try {
-		const chatsRecords = await User.findById(req.auth._id).select('chatsRecords').exec();
+		const chatsRecords = await Chats.find({
+			userId,
+		}).exec();
 		return res.json(chatsRecords);
 	} catch (err) {
-		return res.sendStatus(400).send('Error. Try again.');
+		return res.status(400).send('Error when getting chats, check chats.js in controller');
 	}
 };
 
