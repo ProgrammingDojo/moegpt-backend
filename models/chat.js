@@ -3,16 +3,25 @@ const { Schema } = mongoose;
 
 const chatSchema = new Schema(
 	{
+		chatsId: {
+			type: Schema.Types.ObjectId,
+			ref: 'Chats',
+		},
 		userMsg: {
 			type: String,
-			require: true,
+			trim: true,
+			required: true,
 		},
 		gptMsg: {
 			type: String,
-			require: true,
+			trim: true,
+			required: true,
 		},
 	},
 	{ timestamps: true }
 );
-module.exports = mongoose.model('Chat', chatSchema);
-exports.chatSchema = chatSchema;
+
+module.exports = {
+	Chat: mongoose.model('Chat', chatSchema),
+	chatSchema,
+};

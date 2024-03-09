@@ -1,6 +1,6 @@
 const express = require('express');
 const { signup, login, currentUser, logout } = require('../controllers/auth.js');
-const { gptResponse } = require('../controllers/chat.js');
+const { createNewTopic, getAllChats, getTopic, addNewChat } = require('../controllers/chat.js');
 const { uploadAvatar } = require('../controllers/user.js');
 const { requireSignin } = require('../middlewares/index.js');
 
@@ -11,7 +11,10 @@ router.post('/signup', signup);
 router.post('/login', login);
 router.get('/logout', logout);
 // chat
-router.post('/gpt-response', gptResponse);
+router.post('/create-new-topic', createNewTopic);
+router.post('/add-new-chat', addNewChat);
+router.get('/chats', requireSignin, getAllChats);
+router.get('/chats/:id', requireSignin, getTopic);
 // user
 router.post('/upload-avatar', uploadAvatar);
 

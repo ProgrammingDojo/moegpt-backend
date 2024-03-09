@@ -65,8 +65,8 @@ const logout = async (req, res) => {
 
 const currentUser = async (req, res) => {
 	try {
-		await User.findById(req.auth._id).select('-password').exec();
-		return res.json({ ok: true });
+		const user = await User.findById(req.auth._id).select('email avatar role username').exec();
+		return res.json(user);
 	} catch (err) {
 		return res.sendStatus(400).send('Error. Try again.');
 	}

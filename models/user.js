@@ -1,6 +1,5 @@
 const mongoose = require('mongoose');
 const { Schema } = mongoose;
-const { chatSchema } = require('./chat.js');
 const userSchema = new Schema(
 	{
 		username: {
@@ -32,10 +31,6 @@ const userSchema = new Schema(
 		passwordResetCode: {
 			data: String,
 			default: '',
-		},
-		chatRecords: {
-			type: Array,
-			default: [chatSchema],
 		},
 	},
 	{ timestamps: true }
