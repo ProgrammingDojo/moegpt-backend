@@ -6,23 +6,27 @@ const openai = new OpenAI({
 	apiKey: process.env.OPENAI_API_KEY,
 });
 
+const getGptMsg = async (message) => {
+	const getResponse = await openai.chat.completions.create({
+		model: 'gpt-3.5-turbo',
+		messages: [
+			{
+				role: 'system',
+				content: 'You are a helpful assistant.',
+			},
+			{
+				role: 'user',
+				content: message,
+			},
+		],
+	});
+	return getResponse.choices[0].message.content;
+};
+
 const createNewTopic = async (req, res) => {
 	try {
 		const { message, userId } = req.body;
-		const getResponse = await openai.chat.completions.create({
-			model: 'gpt-3.5-turbo',
-			messages: [
-				{
-					role: 'system',
-					content: 'You are a helpful assistant.',
-				},
-				{
-					role: 'user',
-					content: message,
-				},
-			],
-		});
-		const gptMsg = getResponse.choices[0].message.content;
+		const gptMsg = getGptMsg(message);
 		const newTopic = new Chats({
 			userId,
 			chatsContent: [],
@@ -49,20 +53,7 @@ const createNewTopic = async (req, res) => {
 const addNewChat = async (req, res) => {
 	try {
 		const { message, chatsId } = req.body;
-		const getResponse = await openai.chat.completions.create({
-			model: 'gpt-3.5-turbo',
-			messages: [
-				{
-					role: 'system',
-					content: 'You are a helpful assistant.',
-				},
-				{
-					role: 'user',
-					content: message,
-				},
-			],
-		});
-		const gptMsg = getResponse.choices[0].message.content;
+		const gptMsg = getGptMsg(message);
 		const topic = await Chats.findOne({ _id: chatsId }).exec();
 		const newChat = new Chat({
 			chatsId,
