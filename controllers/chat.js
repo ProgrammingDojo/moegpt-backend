@@ -93,8 +93,8 @@ const updateTopicName = async (req, res) => {
 
 const deleteTopic = async (req, res) => {
 	try {
-		const { chatsId } = req.body;
-		const topic = Chats.findOne({ _id: chatsId });
+		const { chatsId } = req.query;
+		const topic = await Chats.findOne({ _id: chatsId });
 		if (topic) {
 			await Chats.deleteOne({ _id: chatsId });
 			return res.json({
@@ -106,7 +106,7 @@ const deleteTopic = async (req, res) => {
 	} catch (err) {
 		console.log(err);
 		return res
-			.status(400)
+			.status(500)
 			.send('Error when getting response from GPT-3.5-turbo. Check controller/chat.js file.');
 	}
 };
