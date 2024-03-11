@@ -26,7 +26,7 @@ const getGptMsg = async (message) => {
 const createNewTopic = async (req, res) => {
 	try {
 		const { message, userId } = req.body;
-		const gptMsg = getGptMsg(message);
+		const gptMsg = await getGptMsg(message);
 		const newTopic = new Chats({
 			userId,
 			chatsContent: [],
@@ -53,7 +53,7 @@ const createNewTopic = async (req, res) => {
 const addNewChat = async (req, res) => {
 	try {
 		const { message, chatsId } = req.body;
-		const gptMsg = getGptMsg(message);
+		const gptMsg = await getGptMsg(message);
 		const topic = await Chats.findOne({ _id: chatsId }).exec();
 		const newChat = new Chat({
 			chatsId,
@@ -64,6 +64,45 @@ const addNewChat = async (req, res) => {
 		topic.chatsContent.push(savedChat);
 		const savedTopic = await topic.save();
 		return res.json(savedTopic);
+	} catch (err) {
+		console.log(err);
+		return res
+			.status(400)
+			.send('Error when getting response from GPT-3.5-turbo. Check controller/chat.js file.');
+	}
+};
+
+const updateTopicName = async (req, res) => {
+	try {
+		const { name, chatsId } = req.body;
+		const topic = await Chats.findOne({ _id: chatsId }).exec();
+		if (topic) {
+			topic.name = name;
+			const savedTopic = await topic.save();
+			return res.json(savedTopic.name);
+		} else {
+			return res.status(404).send('Topic is not found');
+		}
+	} catch (err) {
+		console.log(err);
+		return res
+			.status(400)
+			.send('Error when getting response from GPT-3.5-turbo. Check controller/chat.js file.');
+	}
+};
+
+const deleteTopic = async (req, res) => {
+	try {
+		const { chatsId } = req.body;
+		const topic = Chats.findOne({ _id: chatsId });
+		if (topic) {
+			await Chats.deleteOne({ _id: chatsId });
+			return res.json({
+				ok: true,
+			});
+		} else {
+			return res.status(404).send('Topic is not found');
+		}
 	} catch (err) {
 		console.log(err);
 		return res
@@ -94,4 +133,11 @@ const getTopic = async (req, res) => {
 	}
 };
 
-module.exports = { createNewTopic, getAllChats, getTopic, addNewChat };
+module.exports = {
+	createNewTopic,
+	getAllChats,
+	getTopic,
+	addNewChat,
+	updateTopicName,
+	deleteTopic,
+};
