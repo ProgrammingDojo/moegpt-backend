@@ -66,7 +66,6 @@ const addNewChat = async (req, res) => {
 			role: 'user',
 			content: message,
 		});
-		console.log(messages);
 		const getResponse = await openai.chat.completions.create({
 			model: 'gpt-3.5-turbo',
 			messages: messages,
