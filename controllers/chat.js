@@ -6,27 +6,23 @@ const openai = new OpenAI({
 	apiKey: process.env.OPENAI_API_KEY,
 });
 
-const getGptMsg = async (message) => {
-	const getResponse = await openai.chat.completions.create({
-		model: 'gpt-3.5-turbo',
-		messages: [
-			{
-				role: 'system',
-				content: 'You are a helpful assistant.',
-			},
-			{
-				role: 'user',
-				content: message,
-			},
-		],
-	});
-	return getResponse.choices[0].message.content;
-};
-
 const createNewTopic = async (req, res) => {
 	try {
 		const { message, userId } = req.body;
-		const gptMsg = await getGptMsg(message);
+		const getResponse = await openai.chat.completions.create({
+			model: 'gpt-3.5-turbo',
+			messages: [
+				{
+					role: 'system',
+					content: 'You are a helpful assistant.',
+				},
+				{
+					role: 'user',
+					content: message,
+				},
+			],
+		});
+		const gptMsg = getResponse.choices[0].message.content;
 		const newTopic = new Chats({
 			userId,
 			chatsContent: [],
@@ -45,7 +41,7 @@ const createNewTopic = async (req, res) => {
 	} catch (err) {
 		console.log(err);
 		return res
-			.status(400)
+			.status(500)
 			.send('Error when getting response from GPT-3.5-turbo. Check controller/chat.js file.');
 	}
 };
@@ -53,21 +49,43 @@ const createNewTopic = async (req, res) => {
 const addNewChat = async (req, res) => {
 	try {
 		const { message, chatsId } = req.body;
-		const gptMsg = await getGptMsg(message);
-		const topic = await Chats.findOne({ _id: chatsId }).exec();
+		const topicToBeModified = await Chats.findOne({ _id: chatsId }).lean().exec();
+		const arrayToBeModified = topicToBeModified.chatsContent;
+		const messages = [];
+		arrayToBeModified.forEach((chat) => {
+			messages.push({
+				role: 'user',
+				content: chat.userMsg,
+			});
+			messages.push({
+				role: 'assistant',
+				content: chat.gptMsg,
+			});
+		});
+		messages.push({
+			role: 'user',
+			content: message,
+		});
+		console.log(messages);
+		const getResponse = await openai.chat.completions.create({
+			model: 'gpt-3.5-turbo',
+			messages: messages,
+		});
+		const gptMsg = getResponse.choices[0].message.content;
 		const newChat = new Chat({
 			chatsId,
 			userMsg: message,
 			gptMsg,
 		});
 		const savedChat = await newChat.save();
+		const topic = await Chats.findOne({ _id: chatsId }).exec();
 		topic.chatsContent.push(savedChat);
 		const savedTopic = await topic.save();
 		return res.json(savedTopic);
 	} catch (err) {
 		console.log(err);
 		return res
-			.status(400)
+			.status(500)
 			.send('Error when getting response from GPT-3.5-turbo. Check controller/chat.js file.');
 	}
 };
