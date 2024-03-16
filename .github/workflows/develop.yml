@@ -1,0 +1,32 @@
+name: Develop Branch
+
+on:
+    push:
+        branches: ['develop']
+    pull_request:
+        branches: ['develop']
+
+jobs:
+    deploy:
+        runs-on: ubuntu-latest
+        steps:
+            - name: Checkout code
+              uses: actions/checkout@v2
+
+            - name: Deploy to EC2
+              uses: appleboy/ssh-action@master
+              env:
+                PORT: ${{ vars.PORT }}
+                DATABASE: ${{ secrets.DATABASE }}
+                JWT_SECRET: ${{ secrets.JWT_SECRET }}
+                OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+              with:
+                  host: ${{ secrets.HOST }}
+                  username: ${{ secrets.USERNAME }}
+                  key: ${{ secrets.SSH_KEY }}
+                  envs: PORT,DATABASE,JWT_SECRET,OPENAI_API_KEY
+                  script: |
+                      cd /moegpt-backend
+                      git pull
+                      npm install
+                      npm start
