@@ -26,7 +26,7 @@ jobs:
                   key: ${{ secrets.SSH_KEY }}
                   envs: PORT,DATABASE,JWT_SECRET,OPENAI_API_KEY
                   script: |
-                      cd /home/moegpt-backend
+                      cd /home/ec2-user/moegpt-backend
                       git pull
                       npm install
                       npm start
