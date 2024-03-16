@@ -31,5 +31,5 @@ app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 const port = process.env.PORT || 5555;
 
 app.listen(port, () => {
-	console.log(`app listening at http://localhost:${port}`);
+	console.log(`app listening at Port: ${port}`);
 });
