@@ -29,4 +29,5 @@ jobs:
                       cd /home/ec2-user/moegpt-backend
                       git pull
                       npm install
-                      npm start
+                      npx pm2 start npm --name "moegpt-server" -- start
+
