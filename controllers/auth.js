@@ -18,6 +18,7 @@ const login = async (req, res) => {
 		res.cookie('token', token, {
 			httpOnly: true,
 			sameSite: 'None',
+			secure: true,
 		});
 		res.json(user);
 	} catch (err) {
@@ -65,10 +66,10 @@ const logout = async (req, res) => {
 
 const currentUser = async (req, res) => {
 	try {
-		const user = await User.findById(req.auth._id).select('email avatar role username').exec();
-		return res.json(user);
+		await User.findById(req.auth._id).select('-password').exec();
+		return res.json({ ok: true });
 	} catch (err) {
-		return res.sendStatus(400).send('Error. Try again.');
+		return res.sendStatus(400).send('Error happened when getting current user.');
 	}
 };
 
