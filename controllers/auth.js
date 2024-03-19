@@ -17,7 +17,8 @@ const login = async (req, res) => {
 		user.password = undefined;
 		res.cookie('token', token, {
 			httpOnly: true,
-			// secure: true, // only works on https
+			secure: false, // only works on https
+			sameSite: 'none',
 		});
 		res.json(user);
 	} catch (err) {
