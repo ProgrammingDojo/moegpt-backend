@@ -3,7 +3,6 @@ const { signup, login, currentUser, logout } = require('../controllers/auth.js')
 const {
 	createNewTopic,
 	getAllChats,
-	getTopic,
 	addNewChat,
 	updateTopicName,
 	deleteTopic,
@@ -20,8 +19,7 @@ router.get('/logout', logout);
 // chat
 router.post('/create-new-topic', createNewTopic);
 router.post('/add-new-chat', addNewChat);
-router.get('/chats', requireSignin, getAllChats);
-router.get('/chats/:id', requireSignin, getTopic);
+router.get('/chats', getAllChats);
 router.post('/update-topic-name', updateTopicName);
 router.delete('/delete-topic', deleteTopic);
 // user

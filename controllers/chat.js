@@ -129,7 +129,7 @@ const deleteTopic = async (req, res) => {
 };
 
 const getAllChats = async (req, res) => {
-	const userId = req.auth._id;
+	const userId = req.query.userId;
 	try {
 		const chatsRecords = await Chats.find({
 			userId,
@@ -140,20 +140,9 @@ const getAllChats = async (req, res) => {
 	}
 };
 
-const getTopic = async (req, res) => {
-	const chatsId = req.params.id;
-	try {
-		const chats = await Chats.findOne({ _id: chatsId }).exec();
-		return res.json(chats);
-	} catch (err) {
-		return res.status(400).send('Error when getting topic, check chats.js in controller');
-	}
-};
-
 module.exports = {
 	createNewTopic,
 	getAllChats,
-	getTopic,
 	addNewChat,
 	updateTopicName,
 	deleteTopic,
