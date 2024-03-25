@@ -21,7 +21,9 @@ mongoose
 
 app.use(bodyParser.json({ limit: '25mb' }));
 app.use(bodyParser.urlencoded({ limit: '25mb', extended: true }));
-app.use(cors({ origin: true, credentials: true }));
+app.use(
+	cors({ origin: 'http://moegptuat.s3-website-ap-southeast-2.amazonaws.com', credentials: true })
+);
 app.use(morgan('dev'));
 app.use(cookieParser());
 app.use('/api', router);
